@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  postgres_prod:
+    container_name: spring_hateoas
+    image: postgres:14.0
+    environment:
+      POSTGRES_USER: dockerdev
+      POSTGRES_PASSWORD: dockerdev
+      POSTGRES_DB: spring_hateoas
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data_buy:/var/lib/postgresql/data
