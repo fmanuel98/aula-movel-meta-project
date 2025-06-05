@@ -1,0 +1,16 @@
+# version: "3.9"
+services:
+  algafood-db:
+    image: mysql:8.0.18
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: "123321"
+      MYSQL_DATABASE: "algafood"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
