@@ -17,5 +17,5 @@ public class CompraInput {
   @NotEmpty
   private List<ItemCompraInput> itemsCompra;
   @NotNull
-  private Long clienteId;
+  private String cliente;
 }

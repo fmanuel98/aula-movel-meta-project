@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useCart } from '../../context/CartContextDef';
 import { useTable } from '../../context/TableContextDef';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaTrash } from 'react-icons/fa';
-import api from '../../api';
 import muamba from '../../assets/Muamba_de_galinha.jpg';
 import mufete from '../../assets/Mufete.jpeg';
 import placeholder from '../../assets/placeholder.jpg';
@@ -16,13 +15,13 @@ const Container = styled.div`
 `;
 
 const LeftPanel = styled(motion.div)`
-  flex: 1;
+  flex: 1; /* Changed from width: 60% to fill available space */
 `;
 
 const RightPanel = styled(motion.div)`
   width: 350px;
   background: #FFFFFF;
-  padding: 16px;
+  padding: 16px; /* Reduced from 24px */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 `;
@@ -86,43 +85,25 @@ const Total = styled.div`
   font-weight: 600;
 `;
 
+const menuItems = [
+  { id: 1, name: 'Funge', price: 500, image: muamba, category: 'Principal' },
+  { id: 2, name: 'Calulu', price: 1200, image: mufete, category: 'Principal' },
+  { id: 3, name: 'Moamba de Galinha', price: 1500, image: muamba, category: 'Principal' },
+  { id: 4, name: 'Mufete de Peixe', price: 1800, image: mufete, category: 'Principal' },
+  { id: 5, name: 'Cabidela', price: 1300, image: muamba, category: 'Principal' },
+  { id: 6, name: 'Feijão de óleo de palma', price: 800, image: mufete, category: 'Acompanhamento' },
+  { id: 7, name: 'Kizaca', price: 1000, image: muamba, category: 'Acompanhamento' },
+  { id: 8, name: 'Ginguba torrada', price: 300, image: mufete, category: 'Lanche' },
+  { id: 9, name: 'Kifula', price: 1100, image: muamba, category: 'Principal' },
+  { id: 10, name: 'Funbuá', price: 600, image: mufete, category: 'Acompanhamento' },
+];
+
 function SalesPage() {
   const { cart, addToCart, removeFromCart, getTotal, submitOrder } = useCart();
   const { selectedTable } = useTable();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Todas');
-  const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchMenuItems = async () => {
-      try {
-        const response = await api.get('/produtos');
-        const imageMap = {
-          'Moamba de Galinha': muamba,
-          'Mufete de Peixe': mufete,
-          // Add more mappings as needed
-        };
-        setMenuItems(
-          response.data.map((item) => ({
-            id: item.id,
-            name: item.nome,
-            price: item.preco,
-            image: imageMap[item.nome] || placeholder,
-            category: item.categoria || 'Principal', // Use backend categoria or default
-          }))
-        );
-        setLoading(false);
-      } catch (err) {
-        console.error('Erro ao buscar produtos:', err);
-        setError('Falha ao carregar produtos.');
-        setLoading(false);
-      }
-    };
-    fetchMenuItems();
-  }, []);
 
   const tableId = selectedTable ? selectedTable.id : null;
   const tableCart = cart[tableId ?? 'none'] || [];
@@ -134,35 +115,6 @@ function SalesPage() {
       (category === 'Todas' || item.category === category) &&
       item.name.toLowerCase().includes(search.toLowerCase())
   );
-
-  const handleSubmitOrder = async () => {
-    if (!tableId || tableCart.length === 0) {
-      alert('Selecione uma mesa e adicione itens ao carrinho.');
-      return;
-    }
-    try {
-      await api.post('/compras', {
-        itemsCompra: tableCart.map((item) => ({
-          produtoId: item.id,
-          quantidade: item.quantity,
-        })),
-        clienteId: 1, // Replace with dynamic client ID later
-      });
-      submitOrder(tableId); // Clear cart
-      alert('Pedido submetido com sucesso!');
-    } catch (err) {
-      console.error('Erro ao submeter pedido:', err);
-      alert('Falha ao submeter pedido.');
-    }
-  };
-
-  if (loading) {
-    return <div>Carregando produtos...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   return (
     <Container>
@@ -180,10 +132,7 @@ function SalesPage() {
           />
           <Button><FaSearch /></Button>
         </SearchBar>
-        <select
-          onChange={(e) => setCategory(e.target.value)}
-          style={{ marginBottom: '24px', padding: '12px', borderRadius: '8px', border: '1px solid #E9ECEF' }}
-        >
+        <select onChange={(e) => setCategory(e.target.value)} style={{ marginBottom: '24px', padding: '12px', borderRadius: '8px', border: '1px solid #E9ECEF' }}>
           <option value="Todas">Todas as Categorias</option>
           <option value="Principal">Principal</option>
           <option value="Acompanhamento">Acompanhamento</option>
@@ -232,7 +181,7 @@ function SalesPage() {
           ))}
         </OrderList>
         <Total>Total: {getTotal(tableId).toFixed(2)} AOA</Total>
-        <Button onClick={handleSubmitOrder}>Submeter Pedido</Button>
+        <Button onClick={() => submitOrder(tableId)}>Submeter Pedido</Button>
         <Button
           onClick={() =>
             navigate('/payment', { state: { tableId, tableCart, total: getTotal(tableId) } })

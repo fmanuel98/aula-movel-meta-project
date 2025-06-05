@@ -33,7 +33,7 @@ public class Produto {
   @Column(nullable = false)
   private Integer quantidade;
   @Column(nullable = false)
-  private LocalDate dataExpiracao;
+  private String image;
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
   private LocalDate createdAt;

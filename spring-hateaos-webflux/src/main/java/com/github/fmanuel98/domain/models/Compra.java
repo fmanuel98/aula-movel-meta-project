@@ -33,8 +33,7 @@ public class Compra {
   private Long id;
   @OneToMany(mappedBy = "compra", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
   private List<ItemCompra> itemsCompra;
-  @ManyToOne(optional = false)
-  private Cliente cliente;
+  private String cliente;
   private BigDecimal total;
   @Column(nullable = false, updatable = false)
   @CreationTimestamp

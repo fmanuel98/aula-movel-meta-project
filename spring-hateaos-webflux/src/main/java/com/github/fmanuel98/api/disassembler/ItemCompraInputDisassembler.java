@@ -1,7 +1,6 @@
 package com.github.fmanuel98.api.disassembler;
 
 import com.github.fmanuel98.api.model.input.ItemCompraInput;
-import com.github.fmanuel98.domain.models.Cliente;
 import com.github.fmanuel98.domain.models.ItemCompra;
 import com.github.fmanuel98.domain.services.ProdutoService;
 
@@ -26,7 +25,7 @@ public class ItemCompraInputDisassembler {
     return item;
   }
 
-  public void copyToDomainObject(ItemCompraInput clienteInput, Cliente cliente) {
-    mapper.map(clienteInput, cliente);
+  public void copyToDomainObject(ItemCompraInput clienteInput, ItemCompra itemCompra) {
+    mapper.map(clienteInput, itemCompra);
   }
 }

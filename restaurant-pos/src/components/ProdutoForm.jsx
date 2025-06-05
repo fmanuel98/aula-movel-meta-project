@@ -5,24 +5,30 @@ const ProdutoForm = () => {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
   const [quantidade, setQuantidade] = useState("");
-  const [dataExpiracao, setDataExpiracao] = useState("");
+  const [image, setimage] = useState(null);
+
+  function clenaForm() {
+    setNome("");
+    setPreco("");
+    setQuantidade("");
+    setimage(null);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const produto = {
-        nome,
-        preco: parseFloat(preco),
-        quantidade: parseInt(quantidade),
-        dataExpiracao
-      };
-      console.table(produto)
-      await api.post("/produtos", produto);
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("nome", nome);
+      formData.append("preco", preco);
+      formData.append("quantidade", quantidade);
+
+      await api.post("/produtos", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }});
       alert("Produto adicionado com sucesso!");
-      setNome("");
-      setPreco("");
-      setQuantidade("");
-      setDataExpiracao("");
+      clenaForm();
     } catch (error) {
       console.error("Erro ao adicionar produto:", error);
     }
@@ -50,9 +56,8 @@ const ProdutoForm = () => {
         onChange={(e) => setQuantidade(e.target.value)}
       />
       <input
-        type="date"
-        value={dataExpiracao}
-        onChange={(e) => setDataExpiracao(e.target.value)}
+        type="file"
+        onChange={(e) => setimage(e.target.files[0])}
       />
       <button type="submit">Adicionar</button>
     </form>
