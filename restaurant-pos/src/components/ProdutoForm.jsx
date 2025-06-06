@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FaPlus, FaEdit, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTimes, FaTrash } from 'react-icons/fa'; // Added FaTrash
 import api from '../api';
 
 const Container = styled(motion.div)`
@@ -88,6 +88,23 @@ const CancelButton = styled(Button)`
   }
 `;
 
+const DeleteButton = styled.button` // New DeleteButton styled component
+  background: linear-gradient(135deg, #DC3545, #C82333);
+  color: #FFFFFF;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 8px auto 0;
+  &:hover {
+    background: linear-gradient(135deg, #C82333, #B02A37);
+  }
+`;
+
 const ProductGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -135,7 +152,7 @@ const EditButton = styled.button`
   padding: 8px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size:zilla: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -199,7 +216,7 @@ const ProdutoForm = () => {
     setError(null);
     try {
       if (isEditing) {
-        const id = Number(produtoId); // Garantir que ID seja numérico
+        const id = Number(produtoId);
         console.log('Enviando PUT para:', `/produtos/${id}`, {
           nome,
           preco: parseFloat(preco),
@@ -257,6 +274,33 @@ const ProdutoForm = () => {
     setImage(null);
     setIsEditing(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Tem certeza que deseja apagar este produto?')) {
+      return;
+    }
+
+    setError(null);
+    try {
+      console.log('Enviando DELETE para:', `/produtos/${id}`);
+      await api.delete(`/produtos/${id}`);
+      setProdutos(produtos.filter((p) => p.id !== id));
+      alert('Produto apagado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao apagar produto:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      setError(
+        error.response?.status === 404
+          ? 'Produto não encontrado.'
+          : error.response?.status === 400
+          ? 'Erro nos dados fornecidos.'
+          : 'Erro ao apagar produto. Veja o console para detalhes.'
+      );
+    }
   };
 
   if (loading) {
@@ -355,6 +399,9 @@ const ProdutoForm = () => {
             <EditButton onClick={() => handleEdit(produto)}>
               <FaEdit /> Editar
             </EditButton>
+            <DeleteButton onClick={() => handleDelete(produto.id)}>
+              <FaTrash /> Apagar
+            </DeleteButton>
           </ProductCard>
         ))}
       </ProductGrid>
