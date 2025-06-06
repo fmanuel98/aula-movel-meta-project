@@ -103,7 +103,7 @@ function SalesPage() {
         console.table(response.data);
         
         const imageMap = {
-          'Moamba de Galinha': muamba,
+          'Muamba de Galinha': muamba,
           'Mufete de Peixe': mufete,
           // Add more mappings as needed
         };
