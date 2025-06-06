@@ -19,6 +19,7 @@ import com.github.fmanuel98.api.assembler.ProdutoModelAssembler;
 import com.github.fmanuel98.api.disassembler.ProdutoInputDisassembler;
 import com.github.fmanuel98.api.model.ProdutoModel;
 import com.github.fmanuel98.api.model.input.ProdutoInput;
+import com.github.fmanuel98.domain.models.Produto;
 import com.github.fmanuel98.domain.repositories.ProdutoRepository;
 import com.github.fmanuel98.domain.services.ProdutoService;
 
@@ -43,26 +44,28 @@ public class ProdutoController {
   }
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ProdutoModel salvar(@Valid ProdutoInput input) {
+  public ProdutoModel salvar(@Valid ProdutoInput input) throws IOException {
     armazenar(input);
+    var produto = new Produto();
+    produto.setNome(input.getNome());
+    produto.setPreco(input.getPreco());
+    produto.setQuantidade(input.getQuantidade());
+    produto.setImage(input.getImage().getOriginalFilename());
+
+    repository.save(produto);
     return null;
   }
 
   private Path getArquivoPath(String nomeArquivo) throws IOException {
-    System.out.println(System.getProperty("user.home"));
-    var path = Paths.get(System.getProperty("user.home"), "desktop", "fotos").resolve(Path.of(nomeArquivo));
-    System.out.println(path.toAbsolutePath());
-    System.out.println(path.getParent());
+    var path = Paths.get(System.getProperty("user.dir"), "fotos").resolve(Path.of(nomeArquivo));
     if (Files.notExists(path)) {
-      System.out.println("criadn");
-      Files.createDirectories(Paths.get(System.getProperty("user.home"), "desktop", "fotos"));
+      Files.createDirectories(Paths.get(System.getProperty("user.dir"), "fotos"));
     }
     return path;
   }
 
   private void armazenar(ProdutoInput input) {
     var file = input.getImage();
-    System.out.println("===================");
     System.out.println(file.getOriginalFilename());
     try {
       var novaFoto = NovoArquivo.builder().inputStream(file.getInputStream())

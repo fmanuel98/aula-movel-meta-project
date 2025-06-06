@@ -13,7 +13,7 @@ public class ProdutoModel {
   private String nome;
   private BigDecimal preco;
   private Integer quantidade;
-  private LocalDate dataExpiracao;
+  private String image;
   private LocalDate createdAt;
   private LocalDate updatedAt;
 }
