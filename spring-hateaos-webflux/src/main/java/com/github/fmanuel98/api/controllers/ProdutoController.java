@@ -1,5 +1,7 @@
 package com.github.fmanuel98.api.controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,12 +48,22 @@ public class ProdutoController {
     return null;
   }
 
-  private Path getArquivoPath(String nomeArquivo) {
-    return Paths.get(System.getenv("PWD")).resolve(Path.of(nomeArquivo));
+  private Path getArquivoPath(String nomeArquivo) throws IOException {
+    System.out.println(System.getProperty("user.home"));
+    var path = Paths.get(System.getProperty("user.home"), "desktop", "fotos").resolve(Path.of(nomeArquivo));
+    System.out.println(path.toAbsolutePath());
+    System.out.println(path.getParent());
+    if (Files.notExists(path)) {
+      System.out.println("criadn");
+      Files.createDirectories(Paths.get(System.getProperty("user.home"), "desktop", "fotos"));
+    }
+    return path;
   }
 
   private void armazenar(ProdutoInput input) {
     var file = input.getImage();
+    System.out.println("===================");
+    System.out.println(file.getOriginalFilename());
     try {
       var novaFoto = NovoArquivo.builder().inputStream(file.getInputStream())
 
