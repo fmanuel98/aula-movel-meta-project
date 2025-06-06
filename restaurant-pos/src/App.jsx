@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import Sidebar from './components/Sidebar/Sidebar';
-import LoginPage from './pages/Login/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import SalesPage from './pages/Sales/SalesPage';
 import PaymentPage from './pages/Payment/PaymentPage';
@@ -32,15 +31,6 @@ function App() {
           <AppContainer>
             <Sidebar />
             <Content><SalesPage /></Content>
-          </AppContainer>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <AppContainer>
-            <Sidebar />
-            <Content><LoginPage /></Content>
           </AppContainer>
         }
       />

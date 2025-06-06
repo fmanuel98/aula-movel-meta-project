@@ -143,11 +143,7 @@ function Sidebar() {
         Suporte
         <Tooltip>Suporte</Tooltip>
       </NavItem>
-      <NavItem to="/login">
-        <Icon><FaSignInAlt size={18} /></Icon>
-        Login
-        <Tooltip>Entrar</Tooltip>
-      </NavItem>
+      
     </SidebarContainer>
   );
 }
